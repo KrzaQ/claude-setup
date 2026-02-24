@@ -8,3 +8,5 @@ install:
 
 diff:
 	@bash scripts/diff.sh
+
+-include Makefile.local
