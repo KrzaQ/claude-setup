@@ -5,8 +5,10 @@ AGENTS=(
 )
 
 SKILLS=(
+    arcesse
     brainstorm
     brainstorm-heavy
+    commit
     devils-advocate
     idea
     research
