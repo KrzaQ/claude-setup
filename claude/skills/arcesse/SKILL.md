@@ -10,7 +10,7 @@ Cloudflare and other bot protection. It is installed globally on this system.
 ## Commands
 
 - `arcesse read <url>` — returns human-readable markdown (like WebFetch). **Use this by default.**
-- `arcesse fetch <url>` — returns raw HTML. Use only when you need the actual markup.
+- `arcesse fetch <url>` — returns raw HTML. Use only when you need the actual markup. Auto-detects file downloads and saves them (use `-o <path>` to choose the output path).
 - `arcesse cookies <url>` — solves the challenge and prints cookies in Netscape format. Use `-f json` for JSON.
 
 Both write content to stdout and status/errors to stderr.
