@@ -1,0 +1,15 @@
+{
+  "commands": [
+    "brainstorm",
+    "commit",
+    "research"
+  ],
+  "skills": [
+    "arcesse"
+  ],
+  "managed_config_keys": [
+    "agent",
+    "default_agent",
+    "keybinds"
+  ]
+}

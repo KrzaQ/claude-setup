@@ -1,0 +1,42 @@
+{
+  "agent": {
+    "ask-first": {
+      "description": "Ask before edits and commands, while allowing safe read-only inspection commands.",
+      "mode": "primary",
+      "permission": {
+        "*": "ask",
+        "bash": {
+          "*": "ask",
+          "curl *": "ask",
+          "git diff *": "allow",
+          "git log *": "allow",
+          "git show *": "allow",
+          "git status *": "allow",
+          "hexdump *": "allow",
+          "ls *": "allow",
+          "xxd *": "allow"
+        },
+        "edit": "ask",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "plan_enter": "allow",
+        "question": "allow",
+        "read": "allow",
+        "skill": {
+          "*": "ask",
+          "arcesse": "allow"
+        }
+      }
+    }
+  },
+  "default_agent": "ask-first",
+  "keybinds": {
+    "input_buffer_end": "end",
+    "input_buffer_home": "home",
+    "input_select_buffer_end": "shift+end",
+    "input_select_buffer_home": "shift+home",
+    "messages_first": "ctrl+g",
+    "messages_last": "ctrl+alt+g"
+  }
+}
