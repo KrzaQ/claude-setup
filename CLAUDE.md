@@ -8,6 +8,7 @@ This repo syncs Claude Code and OpenCode assets between machines.
 - `claude/skills/<name>/SKILL.md` — skill definitions
 - `scripts/manifest.sh` — canonical list of tracked agents and skills
 - `scripts/save.sh` / `install.sh` / `diff.sh` — sync scripts driven by the manifest
+- `scripts/ai-instances.sh` — list active Claude Code / OpenCode processes (`make lsi`)
 - `opencode/commands/<name>.md` — OpenCode custom command templates
 - `opencode/skills/<name>/...` — OpenCode skill definitions
 - `opencode/config/managed.json` — repo-managed subset of OpenCode config

@@ -1,4 +1,4 @@
-.PHONY: save install diff
+.PHONY: save install diff lsi
 
 save:
 	@bash scripts/save.sh
@@ -8,5 +8,8 @@ install:
 
 diff:
 	@bash scripts/diff.sh
+
+lsi:
+	@bash scripts/ai-instances.sh
 
 -include Makefile.local

@@ -8,7 +8,7 @@ Sync custom Claude Code and OpenCode assets between machines.
 claude/agents/    — agent definitions (*.md)
 claude/skills/    — skill directories (each with SKILL.md)
 opencode/         — OpenCode sync module (manifest, scripts, Makefile)
-scripts/          — save/install/diff shell scripts
+scripts/          — save/install/diff shell scripts + utilities
 Makefile          — top-level targets
 ```
 
@@ -18,6 +18,7 @@ Makefile          — top-level targets
 make save      # copy Claude agents & skills from ~/.claude into this repo
 make install   # copy Claude agents & skills from this repo into ~/.claude
 make diff      # show differences between repo and ~/.claude
+make lsi       # list active Claude Code and OpenCode instances
 ```
 
 ## OpenCode sync
