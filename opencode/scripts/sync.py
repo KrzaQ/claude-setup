@@ -16,11 +16,13 @@ MANIFEST_PATH = REPO_DIR / "manifest.json"
 REPO_COMMANDS_DIR = REPO_DIR / "commands"
 REPO_SKILLS_DIR = REPO_DIR / "skills"
 REPO_CONFIG_PATH = REPO_DIR / "config" / "managed.json"
+REPO_TUI_PATH = REPO_DIR / "config" / "managed-tui.json"
 
 LIVE_DIR = Path.home() / ".config" / "opencode"
 LIVE_COMMANDS_DIR = LIVE_DIR / "commands"
 LIVE_SKILLS_DIR = LIVE_DIR / "skills"
 LIVE_CONFIG_PATH = LIVE_DIR / "opencode.json"
+LIVE_TUI_PATH = LIVE_DIR / "tui.json"
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -48,12 +50,13 @@ def load_string_list(manifest: dict[str, Any], key: str) -> list[str]:
     return items
 
 
-def load_manifest() -> tuple[list[str], list[str], list[str]]:
+def load_manifest() -> tuple[list[str], list[str], list[str], list[str]]:
     manifest = load_json(MANIFEST_PATH)
     commands = load_string_list(manifest, "commands")
     skills = load_string_list(manifest, "skills")
     managed_keys = load_string_list(manifest, "managed_config_keys")
-    return commands, skills, managed_keys
+    managed_tui_keys = load_string_list(manifest, "managed_tui_keys")
+    return commands, skills, managed_keys, managed_tui_keys
 
 
 def extract_managed(config: dict[str, Any], managed_keys: list[str]) -> dict[str, Any]:
@@ -80,7 +83,7 @@ def copy_file(src: Path, dst: Path) -> None:
 
 
 def save() -> None:
-    commands, skills, managed_keys = load_manifest()
+    commands, skills, managed_keys, managed_tui_keys = load_manifest()
 
     for skill in skills:
         src = LIVE_SKILLS_DIR / skill
@@ -108,9 +111,17 @@ def save() -> None:
     else:
         print(f"WARN: {LIVE_CONFIG_PATH} not found, skipping", file=sys.stderr)
 
+    if LIVE_TUI_PATH.is_file():
+        live_tui = load_json(LIVE_TUI_PATH)
+        managed_tui = extract_managed(live_tui, managed_tui_keys)
+        write_json(REPO_TUI_PATH, managed_tui)
+        print("saved config/managed-tui.json")
+    else:
+        print(f"WARN: {LIVE_TUI_PATH} not found, skipping", file=sys.stderr)
+
 
 def install() -> None:
-    commands, skills, managed_keys = load_manifest()
+    commands, skills, managed_keys, managed_tui_keys = load_manifest()
 
     for skill in skills:
         src = REPO_SKILLS_DIR / skill
@@ -151,6 +162,28 @@ def install() -> None:
         print("installed config/managed.json into ~/.config/opencode/opencode.json")
     else:
         print(f"WARN: {REPO_CONFIG_PATH} not found in repo, skipping", file=sys.stderr)
+
+    if REPO_TUI_PATH.is_file():
+        managed_tui = load_json(REPO_TUI_PATH)
+
+        if LIVE_TUI_PATH.is_file():
+            live_tui = load_json(LIVE_TUI_PATH)
+        else:
+            live_tui = {}
+
+        for key in managed_tui_keys:
+            if key in managed_tui:
+                live_tui[key] = managed_tui[key]
+            else:
+                print(
+                    f"WARN: managed tui key '{key}' missing, leaving local value unchanged",
+                    file=sys.stderr,
+                )
+
+        write_json(LIVE_TUI_PATH, live_tui)
+        print("installed config/managed-tui.json into ~/.config/opencode/tui.json")
+    else:
+        print(f"WARN: {REPO_TUI_PATH} not found in repo, skipping", file=sys.stderr)
 
 
 def diff_skills(skills: list[str]) -> bool:
@@ -263,13 +296,52 @@ def diff_config(managed_keys: list[str]) -> bool:
     return has_diff
 
 
+def diff_tui_config(managed_tui_keys: list[str]) -> bool:
+    has_diff = False
+
+    if REPO_TUI_PATH.is_file() and LIVE_TUI_PATH.is_file():
+        repo_managed = load_json(REPO_TUI_PATH)
+        live_tui = load_json(LIVE_TUI_PATH)
+        live_managed = extract_managed(live_tui, managed_tui_keys)
+
+        repo_text = json.dumps(repo_managed, indent=2, sort_keys=True) + "\n"
+        live_text = json.dumps(live_managed, indent=2, sort_keys=True) + "\n"
+
+        if repo_text != live_text:
+            has_diff = True
+            delta = difflib.unified_diff(
+                repo_text.splitlines(keepends=True),
+                live_text.splitlines(keepends=True),
+                fromfile="repo: config/managed-tui.json",
+                tofile="live: managed subset of ~/.config/opencode/tui.json",
+            )
+            for line in delta:
+                sys.stdout.write(line)
+    elif REPO_TUI_PATH.is_file():
+        print(
+            "config/managed-tui.json: exists in repo but ~/.config/opencode/tui.json is missing"
+        )
+        has_diff = True
+    elif LIVE_TUI_PATH.is_file():
+        live_tui = load_json(LIVE_TUI_PATH)
+        live_managed = extract_managed(live_tui, managed_tui_keys)
+        if live_managed:
+            print(
+                "config/managed-tui.json: missing in repo but managed tui keys exist in ~/.config/opencode/tui.json"
+            )
+            has_diff = True
+
+    return has_diff
+
+
 def show_diff() -> None:
-    commands, skills, managed_keys = load_manifest()
+    commands, skills, managed_keys, managed_tui_keys = load_manifest()
     has_diff = False
 
     has_diff = diff_skills(skills) or has_diff
     has_diff = diff_commands(commands) or has_diff
     has_diff = diff_config(managed_keys) or has_diff
+    has_diff = diff_tui_config(managed_tui_keys) or has_diff
 
     if not has_diff:
         print("No differences.")

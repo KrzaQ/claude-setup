@@ -1,0 +1,10 @@
+{
+  "keybinds": {
+    "input_buffer_end": "end",
+    "input_buffer_home": "home",
+    "input_select_buffer_end": "shift+end",
+    "input_select_buffer_home": "shift+home",
+    "messages_first": "ctrl+g",
+    "messages_last": "ctrl+alt+g"
+  }
+}

@@ -24,7 +24,7 @@ make lsi       # list active Claude Code and OpenCode instances
 ## OpenCode sync
 
 OpenCode sync is managed separately under `opencode/`.
-Managed config scope is `agent`, `default_agent`, and `keybinds`, plus tracked OpenCode commands and skills.
+Managed config scope is `agent`, `default_agent` (in `opencode.json`) and `keybinds` (in `tui.json`), plus tracked OpenCode commands and skills.
 
 ```bash
 cd opencode

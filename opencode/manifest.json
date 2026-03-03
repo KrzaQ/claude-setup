@@ -9,7 +9,9 @@
   ],
   "managed_config_keys": [
     "agent",
-    "default_agent",
+    "default_agent"
+  ],
+  "managed_tui_keys": [
     "keybinds"
   ]
 }
