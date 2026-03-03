@@ -17,12 +17,17 @@ Both write content to stdout and status/errors to stderr.
 
 ## Exporting cookies as proxy
 
-Use `arcesse cookies` to get Cloudflare bypass cookies, then pass them to curl or other tools:
+Use `arcesse cookies` to solve the challenge once, then reuse the cookies across multiple requests.
+Use a domain-derived filename to avoid collisions:
 
 ```bash
-arcesse cookies "https://example.com" > /tmp/cookies.txt
-curl -b /tmp/cookies.txt "https://example.com/api/data"
+arcesse cookies "https://example.com" > /tmp/arcesse-example.com.txt
+curl -b /tmp/arcesse-example.com.txt "https://example.com/api/page/1"
+curl -b /tmp/arcesse-example.com.txt "https://example.com/api/page/2"
 ```
+
+Cookies typically expire after ~30 minutes. If requests start failing again, re-run `arcesse cookies`.
+Clean up with `rm` when done, or use a project-local path if you prefer keeping cookies elsewhere.
 
 ## Usage
 
