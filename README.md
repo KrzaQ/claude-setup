@@ -8,15 +8,15 @@ Sync custom Claude Code and OpenCode assets between machines.
 claude/agents/    — agent definitions (*.md)
 claude/skills/    — skill directories (each with SKILL.md)
 opencode/         — OpenCode sync module (manifest, scripts, Makefile)
-scripts/          — save/install/diff shell scripts + utilities
+scripts/          — Python sync script, manifest, and utilities
 Makefile          — top-level targets
 ```
 
 ## Usage
 
 ```bash
-make save      # copy Claude agents & skills from ~/.claude into this repo
-make install   # copy Claude agents & skills from this repo into ~/.claude
+make save      # copy Claude agents, skills, and managed settings from ~/.claude into this repo
+make install   # apply Claude agents, skills, and managed settings from this repo into ~/.claude
 make diff      # show differences between repo and ~/.claude
 make lsi       # list active Claude Code and OpenCode instances
 ```
@@ -33,9 +33,9 @@ make install   # apply managed OpenCode commands/skills/config into ~/.config/op
 make diff      # show differences between repo and ~/.config/opencode
 ```
 
-## Adding a new Claude agent or skill
+## Adding a new Claude agent, skill, or managed settings key
 
-1. Add the entry to `scripts/manifest.sh` (keep lists alphabetically sorted).
+1. Add the entry to `scripts/manifest.json` (keep lists alphabetically sorted).
 2. Run `make save` to pull the files from `~/.claude` into the repo.
 3. Commit.
 
