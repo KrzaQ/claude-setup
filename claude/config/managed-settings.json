@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find *)",
+      "Bash(git stash show *)",
+      "Bash(grep *)",
+      "Bash(rg *)",
+      "WebFetch",
+      "WebSearch",
+      "mcp__ida-pro-mcp__callees",
+      "mcp__ida-pro-mcp__decompile",
+      "mcp__ida-pro-mcp__disasm",
+      "mcp__ida-pro-mcp__find",
+      "mcp__ida-pro-mcp__find_bytes",
+      "mcp__ida-pro-mcp__find_regex",
+      "mcp__ida-pro-mcp__get_bytes",
+      "mcp__ida-pro-mcp__get_global_value",
+      "mcp__ida-pro-mcp__get_string",
+      "mcp__ida-pro-mcp__lookup_funcs",
+      "mcp__ida-pro-mcp__set_comments",
+      "mcp__ida-pro-mcp__xrefs_to",
+      "mcp__outline__create_document",
+      "mcp__outline__get_collection",
+      "mcp__outline__get_document",
+      "mcp__outline__list_collections",
+      "mcp__outline__list_documents",
+      "mcp__outline__search_documents",
+      "mcp__vikunja__get_task",
+      "mcp__vikunja__list_projects",
+      "mcp__vikunja__list_tasks",
+      "mcp__vikunja__update_task"
+    ],
+    "defaultMode": "default",
+    "deny": []
+  }
+}

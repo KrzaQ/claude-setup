@@ -1,13 +1,13 @@
 .PHONY: save install diff lsi
 
 save:
-	@bash scripts/save.sh
+	@uv run python scripts/sync.py save
 
 install:
-	@bash scripts/install.sh
+	@uv run python scripts/sync.py install
 
 diff:
-	@bash scripts/diff.sh
+	@uv run python scripts/sync.py diff
 
 lsi:
 	@bash scripts/ai-instances.sh
