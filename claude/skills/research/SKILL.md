@@ -2,7 +2,7 @@
 description: research a topic, come back with an answer, do not code
 argument-hint: what is being researched
 disable-model-invocation: true
-allowed-tools: Read, Grep, Glob, Bash, WebFetch, WebSearch, Task
+allowed-tools: Read, Grep, Glob, WebFetch, WebSearch, Task, Bash(git log *), Bash(git diff *), Bash(git show *), Bash(git merge-base *), Bash(git blame *), Bash(git branch *), Bash(git tag *), Bash(git status), Bash(git ls-files *), Bash(git stash list), Bash(git rev-parse *), Bash(tree *), Bash(wc *), Bash(jq *), Bash(date *), Bash(echo *), Bash(pwd)
 ---
 
 Look at the current conversation context and the user's arguments below.
