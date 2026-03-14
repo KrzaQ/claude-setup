@@ -50,5 +50,6 @@
     ],
     "defaultMode": "default",
     "deny": []
-  }
+  },
+  "showThinkingSummaries": true
 }

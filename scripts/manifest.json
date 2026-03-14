@@ -5,7 +5,8 @@
     "strict-code-reviewer.md"
   ],
   "managed_settings_keys": [
-    "permissions"
+    "permissions",
+    "showThinkingSummaries"
   ],
   "skills": [
     "arcesse",
