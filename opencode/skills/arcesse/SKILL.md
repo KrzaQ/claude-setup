@@ -23,17 +23,12 @@ Use the `bash` tool and prefer these commands:
 - `arcesse fetch "<url>"` for raw HTML when markup is required
 - `arcesse cookies "<url>"` when the user needs cookie export for downstream requests
 
-If cookie handoff is needed, solve the challenge once and reuse.
-Use a domain-derived filename to avoid collisions:
+If cookie handoff is needed:
 
 ```bash
-arcesse cookies "https://example.com" > /tmp/arcesse-example.com.txt
-curl -b /tmp/arcesse-example.com.txt "https://example.com/api/page/1"
-curl -b /tmp/arcesse-example.com.txt "https://example.com/api/page/2"
+arcesse cookies "https://example.com" > /tmp/cookies.txt
+curl -b /tmp/cookies.txt "https://example.com/api/data"
 ```
-
-Cookies typically expire after ~30 minutes. If requests start failing again, re-run `arcesse cookies`.
-Clean up with `rm` when done, or use a project-local path if you prefer keeping cookies elsewhere.
 
 ## Failure handling
 
