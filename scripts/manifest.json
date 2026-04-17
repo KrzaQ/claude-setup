@@ -5,6 +5,7 @@
     "strict-code-reviewer.md"
   ],
   "managed_settings_keys": [
+    "env",
     "permissions",
     "showThinkingSummaries"
   ],
