@@ -6,7 +6,6 @@
   ],
   "managed_settings_keys": [
     "disableAutoMode",
-    "env",
     "permissions",
     "showThinkingSummaries"
   ],
