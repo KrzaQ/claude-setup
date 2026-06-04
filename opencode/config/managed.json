@@ -32,6 +32,7 @@
         "glob": "allow",
         "grep": "allow",
         "list": "allow",
+        "lsp": "allow",
         "plan_enter": "allow",
         "question": "allow",
         "read": "allow",
@@ -39,7 +40,9 @@
           "*": "ask",
           "arcesse": "allow"
         },
-        "webfetch": "allow"
+        "todowrite": "allow",
+        "webfetch": "allow",
+        "websearch": "allow"
       }
     }
   },
