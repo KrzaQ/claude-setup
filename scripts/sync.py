@@ -15,6 +15,7 @@ REPO_DIR = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = REPO_DIR / "scripts" / "manifest.json"
 REPO_AGENTS_DIR = REPO_DIR / "claude" / "agents"
 REPO_SKILLS_DIR = REPO_DIR / "claude" / "skills"
+REPO_FILES_DIR = REPO_DIR / "claude" / "files"
 REPO_SETTINGS_PATH = REPO_DIR / "claude" / "config" / "managed-settings.json"
 
 LIVE_DIR = Path.home() / ".claude"
@@ -48,12 +49,13 @@ def load_string_list(manifest: dict[str, Any], key: str) -> list[str]:
     return items
 
 
-def load_manifest() -> tuple[list[str], list[str], list[str]]:
+def load_manifest() -> tuple[list[str], list[str], list[str], list[str]]:
     manifest = load_json(MANIFEST_PATH)
     agents = load_string_list(manifest, "agents")
     skills = load_string_list(manifest, "skills")
+    files = load_string_list(manifest, "files")
     managed_keys = load_string_list(manifest, "managed_settings_keys")
-    return agents, skills, managed_keys
+    return agents, skills, files, managed_keys
 
 
 def extract_managed(config: dict[str, Any], managed_keys: list[str]) -> dict[str, Any]:
@@ -91,7 +93,7 @@ def copy_file(src: Path, dst: Path) -> None:
 
 
 def save() -> None:
-    agents, skills, managed_keys = load_manifest()
+    agents, skills, files, managed_keys = load_manifest()
 
     for agent in agents:
         src = LIVE_AGENTS_DIR / agent
@@ -111,6 +113,15 @@ def save() -> None:
         else:
             print(f"WARN: {src} not found, skipping", file=sys.stderr)
 
+    for file in files:
+        src = LIVE_DIR / file
+        dst = REPO_FILES_DIR / file
+        if src.is_file():
+            copy_file(src, dst)
+            print(f"saved files/{file}")
+        else:
+            print(f"WARN: {src} not found, skipping", file=sys.stderr)
+
     if LIVE_SETTINGS_PATH.is_file():
         live_config = load_json(LIVE_SETTINGS_PATH)
         managed = extract_managed(live_config, managed_keys)
@@ -122,7 +133,7 @@ def save() -> None:
 
 
 def install() -> None:
-    agents, skills, managed_keys = load_manifest()
+    agents, skills, files, managed_keys = load_manifest()
 
     for agent in agents:
         src = REPO_AGENTS_DIR / agent
@@ -139,6 +150,15 @@ def install() -> None:
         if src.is_dir():
             copy_tree_overlay(src, dst)
             print(f"installed skills/{skill}/")
+        else:
+            print(f"WARN: {src} not found in repo, skipping", file=sys.stderr)
+
+    for file in files:
+        src = REPO_FILES_DIR / file
+        dst = LIVE_DIR / file
+        if src.is_file():
+            copy_file(src, dst)
+            print(f"installed files/{file}")
         else:
             print(f"WARN: {src} not found in repo, skipping", file=sys.stderr)
 
@@ -194,6 +214,40 @@ def diff_agents(agents: list[str]) -> bool:
             has_diff = True
         elif live.is_file():
             print(f"agents/{agent}: exists in ~/.claude but not in repo")
+            has_diff = True
+
+    return has_diff
+
+
+def diff_files(files: list[str]) -> bool:
+    has_diff = False
+
+    for file in files:
+        repo = REPO_FILES_DIR / file
+        live = LIVE_DIR / file
+        if repo.is_file() and live.is_file():
+            result = subprocess.run(
+                [
+                    "diff",
+                    "-u",
+                    str(repo),
+                    str(live),
+                    "--label",
+                    f"repo: files/{file}",
+                    "--label",
+                    f"live: files/{file}",
+                ],
+                check=False,
+            )
+            if result.returncode == 1:
+                has_diff = True
+            elif result.returncode != 0:
+                raise RuntimeError(f"diff failed for file {file}")
+        elif repo.is_file():
+            print(f"files/{file}: exists in repo but not in ~/.claude")
+            has_diff = True
+        elif live.is_file():
+            print(f"files/{file}: exists in ~/.claude but not in repo")
             has_diff = True
 
     return has_diff
@@ -272,11 +326,12 @@ def diff_settings(managed_keys: list[str]) -> bool:
 
 
 def show_diff() -> None:
-    agents, skills, managed_keys = load_manifest()
+    agents, skills, files, managed_keys = load_manifest()
     has_diff = False
 
     has_diff = diff_agents(agents) or has_diff
     has_diff = diff_skills(skills) or has_diff
+    has_diff = diff_files(files) or has_diff
     has_diff = diff_settings(managed_keys) or has_diff
 
     if not has_diff:

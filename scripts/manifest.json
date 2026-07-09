@@ -4,10 +4,14 @@
     "idea-generator.md",
     "strict-code-reviewer.md"
   ],
+  "files": [
+    "statusline-command.sh"
+  ],
   "managed_settings_keys": [
     "disableAutoMode",
     "permissions",
-    "showThinkingSummaries"
+    "showThinkingSummaries",
+    "statusLine"
   ],
   "skills": [
     "arcesse",

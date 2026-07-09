@@ -6,6 +6,7 @@ This repo syncs Claude Code and OpenCode assets between machines.
 
 - `claude/agents/<name>.md` — agent definitions
 - `claude/skills/<name>/SKILL.md` — skill definitions
+- `claude/files/<name>` — verbatim files copied to/from the `~/.claude` root (e.g. `statusline-command.sh`)
 - `scripts/manifest.json` — canonical list of tracked agents, skills, and managed settings keys
 - `scripts/sync.py` — Claude Code save/install/diff logic (Python, run via `uv`)
 - `claude/config/managed-settings.json` — repo-managed subset of Claude Code settings (`settings.json`)
@@ -23,8 +24,9 @@ This repo syncs Claude Code and OpenCode assets between machines.
 ### Claude sync
 
 - `uv` is required for Claude sync commands.
-- When adding or removing an agent, skill, or managed settings key, update `scripts/manifest.json` first, then run `make save`.
-- Keep `agents`, `skills`, and `managed_settings_keys` in `scripts/manifest.json` alphabetically sorted.
+- When adding or removing an agent, skill, file, or managed settings key, update `scripts/manifest.json` first, then run `make save`.
+- Keep `agents`, `skills`, `files`, and `managed_settings_keys` in `scripts/manifest.json` alphabetically sorted.
+- `files` entries are paths relative to the `~/.claude` root; they are stored verbatim under `claude/files/`.
 - Managed Claude settings keys are currently: `permissions` (in `settings.json`).
 - Do not edit files under `claude/` by hand; always edit in `~/.claude` and `make save`.
 
