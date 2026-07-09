@@ -1,7 +1,8 @@
 #!/bin/bash
 # Claude Code status line.
 #   LEFT : cwd  +added -removed   (git working-tree change vs HEAD)
-#   RIGHT: model  [context bar] pct% (Nk)  · 5h P% (Tleft) · 7d P%
+#   RIGHT: model  effort  (Nk)  · 5h P% (Tleft) · 7d P%
+# The kilotoken count turns red once context usage passes 90%.
 # Rate-limit windows are colored by *pace* — projecting current burn to the
 # window reset (red if on track to exceed 100%, yellow >=90%, else green).
 
@@ -120,26 +121,14 @@ if [ -n "$effort" ]; then
     right_colored="${right_colored} ${ec}${effort}${RESET}"
 fi
 
-if [ -n "$used" ]; then
-    pct=$(printf "%.0f" "$used")
-    width=10
-    filled=$(( pct * width / 100 )); [ "$filled" -gt "$width" ] && filled=$width
-    empty=$(( width - filled ))
-    bar_fill=$(printf "%${filled}s" "" | tr ' ' '#')
-    bar_empty=$(printf "%${empty}s" "" | tr ' ' '-')
-    bar_plain="[${bar_fill}${bar_empty}] ${pct}%"
-
-    if [ "$pct" -lt 60 ]; then bar_color="$GREEN"
-    elif [ "$pct" -le 85 ]; then bar_color="$YELLOW"
-    else bar_color="$RED"; fi
-
-    right_plain="${right_plain} ${bar_plain}"
-    right_colored="${right_colored} ${bar_color}${bar_plain}${RESET}"
-
-    if [ -n "$ktoken" ]; then
-        right_plain="${right_plain} (${ktoken})"
-        right_colored="${right_colored} (${ORANGE}${ktoken}${RESET})"
+if [ -n "$ktoken" ]; then
+    kcolor="$ORANGE"
+    if [ -n "$used" ]; then
+        pct=$(printf "%.0f" "$used")
+        [ "$pct" -ge 90 ] && kcolor="$RED"
     fi
+    right_plain="${right_plain} (${ktoken})"
+    right_colored="${right_colored} (${kcolor}${ktoken}${RESET})"
 fi
 
 # Plan rate-limit usage (Pro/Max only, after the first API response).
