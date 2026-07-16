@@ -8,12 +8,28 @@
 
 input=$(cat)
 
+# winpath PATH — fold a Windows path into the POSIX form Git Bash uses
+# (C:\code\kq and C:/code/kq both -> /c/code/kq). Untouched otherwise, so it is
+# a no-op on Linux. Backslashes must go before the path reaches printf '%b'
+# below, where \c silently truncates the line and \U aborts it.
+winpath() {
+    local p="$1" drive
+    case "$p" in
+        [A-Za-z]:[/\\]*)
+            p="${p//\\//}"
+            drive="${p:0:1}"
+            p="/${drive,,}${p:2}"
+            ;;
+    esac
+    printf '%s' "$p"
+}
+
 model=$(echo "$input" | jq -r '.model.display_name')
 used=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
 tokens=$(echo "$input" | jq -r '.context_window.total_input_tokens // empty')
 effort=$(echo "$input" | jq -r '.effort.level // empty')
-cwd=$(echo "$input" | jq -r '.cwd // .workspace.current_dir // empty')
-project=$(echo "$input" | jq -r '.workspace.project_dir // empty')
+cwd=$(winpath "$(echo "$input" | jq -r '.cwd // .workspace.current_dir // empty')")
+project=$(winpath "$(echo "$input" | jq -r '.workspace.project_dir // empty')")
 
 five_used=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
 five_reset=$(echo "$input" | jq -r '.rate_limits.five_hour.resets_at // empty')
@@ -78,7 +94,8 @@ left_plain=""
 left_colored=""
 base="${project:-$cwd}"
 if [ -n "$base" ]; then
-    dbase="$base"; [ -n "$HOME" ] && dbase="${base/#$HOME/~}"
+    # The ~ is escaped: bare, it would tilde-expand back to $HOME and no-op.
+    dbase="$base"; [ -n "$HOME" ] && dbase="${base/#$HOME/\~}"
     left_plain="$dbase"
     left_colored="${GREY}${dbase}${RESET}"
 
@@ -90,7 +107,7 @@ if [ -n "$base" ]; then
                 left_plain="${left_plain}/${rel}"
                 left_colored="${left_colored}${LBLUE}/${rel}${RESET}" ;;
             *)  # cwd is outside the project root — show it in full instead
-                dcwd="$cwd"; [ -n "$HOME" ] && dcwd="${cwd/#$HOME/~}"
+                dcwd="$cwd"; [ -n "$HOME" ] && dcwd="${cwd/#$HOME/\~}"
                 left_plain="$dcwd"
                 left_colored="${LBLUE}${dcwd}${RESET}" ;;
         esac
