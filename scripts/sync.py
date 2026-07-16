@@ -35,7 +35,9 @@ def load_json(path: Path) -> dict[str, Any]:
 def write_json(path: Path, data: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     text = json.dumps(data, indent=2, sort_keys=True)
-    path.write_text(text + "\n", encoding="utf-8")
+    # newline="\n" — the default would translate to CRLF on Windows, so every
+    # save there rewrote the file wholesale.
+    path.write_text(text + "\n", encoding="utf-8", newline="\n")
 
 
 def load_string_list(manifest: dict[str, Any], key: str) -> list[str]:
