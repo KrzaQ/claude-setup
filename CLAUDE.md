@@ -27,7 +27,7 @@ This repo syncs Claude Code and OpenCode assets between machines.
 - When adding or removing an agent, skill, file, or managed settings key, update `scripts/manifest.json` first, then run `make save`.
 - Keep `agents`, `skills`, `files`, and `managed_settings_keys` in `scripts/manifest.json` alphabetically sorted.
 - `files` entries are paths relative to the `~/.claude` root; they are stored verbatim under `claude/files/`.
-- Managed Claude settings keys are currently: `permissions` (in `settings.json`).
+- Managed Claude settings keys are currently: `permissions`, `showThinkingSummaries`, `statusLine` (in `settings.json`).
 - Do not edit files under `claude/` by hand; always edit in `~/.claude` and `make save`.
 
 ### OpenCode sync
