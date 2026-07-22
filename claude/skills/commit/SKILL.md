@@ -1,7 +1,8 @@
 ---
-description: commit
+name: commit
+description: Commit changes in the user's house style — module-name prefix (`zsh:`, `ssh:`, `install:`), imperative subject under ~70 chars, a body explaining *why* rather than recapping the diff, and one commit per module or concern. Never adds Co-Authored-By trailers or mentions AI tools.
+when_to_use: When the user asks to commit ("commit this", "commit the fix", "/commit"), or when a task being carried out requires making a commit. Not proactively after editing files — committing is the user's call.
 argument-hint: what is being committed
-disable-model-invocation: true
 allowed-tools: Read, Grep, Glob, Task, Bash(git log *), Bash(git diff *), Bash(git show *), Bash(git merge-base *), Bash(git blame *), Bash(git branch *), Bash(git tag *), Bash(git status), Bash(git ls-files *), Bash(git stash list), Bash(git rev-parse *), Bash(git cat-file *), Bash(git check-ignore *), Bash(git cherry *), Bash(git describe *), Bash(git format-patch *), Bash(git grep *), Bash(git ls-remote *), Bash(git ls-tree *), Bash(git range-diff *), Bash(git reflog show *), Bash(git rev-list *), Bash(git shortlog *), Bash(tree *), Bash(wc *), Bash(jq *), Bash(date *), Bash(echo *), Bash(pwd)
 ---
 
