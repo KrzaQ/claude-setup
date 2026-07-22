@@ -1,6 +1,6 @@
 #!/bin/bash
 # Claude Code status line.
-#   LEFT : cwd  +added -removed   (git working-tree change vs HEAD)
+#   LEFT : badges  cwd  +added -removed   (git working-tree change vs HEAD)
 #   RIGHT: model  effort  (Nk)  · 5h P% (Tleft) · 7d P%
 # The kilotoken count turns red once context usage passes 90%.
 # Rate-limit windows are colored by *pace* — projecting current burn to the
@@ -36,8 +36,10 @@ five_reset=$(echo "$input" | jq -r '.rate_limits.five_hour.resets_at // empty')
 week_used=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty')
 week_reset=$(echo "$input" | jq -r '.rate_limits.seven_day.resets_at // empty')
 
-# ANSI colors — normal weight only (no bold, no dim) so it reads clearly.
+# ANSI colors — normal weight only (no bold, no dim) so it reads clearly. The
+# PRODUCTION badge is the one exception: it exists to be impossible to miss.
 RESET="\033[0m"
+BADGE_PROD="\033[41;1;37m"
 CYAN="\033[36m"
 GREY="\033[90m"
 LBLUE="\033[94m"
@@ -89,6 +91,23 @@ time_left() {
     if [ "$h" -gt 0 ]; then printf '%dh%dm' "$h" "$m"; else printf '%dm' "$m"; fi
 }
 
+# ---- Context badges ----
+# Mirrors the shell prompt's badges (dotfiles zsh/.zshrc) so both surfaces answer
+# "where am I" the same way: independent, so PRODUCTION and LIM can show at once.
+# $LIMES_VERSION is set inside a limes sandbox; $PRODUCTION per-host in .zprofile.local.
+# Each _plain entry must be as wide as what its _colored twin prints, trailing
+# separator included — the layout below measures the plain string.
+badge_plain=""
+badge_colored=""
+if [ -n "$PRODUCTION" ]; then
+    badge_plain="${badge_plain} PRODUCTION  "
+    badge_colored="${badge_colored}${BADGE_PROD} PRODUCTION ${RESET} "
+fi
+if [ -n "$LIMES_VERSION" ]; then
+    badge_plain="${badge_plain}LIM "
+    badge_colored="${badge_colored}${ORANGE}LIM${RESET} "
+fi
+
 # ---- LEFT: project path + relative cwd (when it differs) + git change count ----
 left_plain=""
 left_colored=""
@@ -124,6 +143,9 @@ if [ -n "$base" ]; then
         left_colored="${left_colored} ${GREEN}+${added}${RESET} ${RED}-${removed}${RESET}"
     fi
 fi
+
+left_plain="${badge_plain}${left_plain}"
+left_colored="${badge_colored}${left_colored}"
 
 # ---- RIGHT: model + context bar + tokens + rate limits ----
 ktoken=""
