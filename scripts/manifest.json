@@ -8,7 +8,6 @@
     "statusline-command.sh"
   ],
   "managed_settings_keys": [
-    "disableAutoMode",
     "permissions",
     "showThinkingSummaries",
     "statusLine"
