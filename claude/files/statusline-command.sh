@@ -61,10 +61,11 @@ effort_color() {
     esac
 }
 
-# pace_color USED RESETS_AT DURATION_SECONDS — linearly projects usage-so-far
-# to the reset and colors by projected end-of-window total (red >=100%,
-# yellow >=90%, else green); colors by raw usage if the reset is missing.
-pace_color() {
+# pace_projected USED RESETS_AT DURATION_SECONDS — extrapolates usage-so-far to
+# the reset: the window total this burn rate lands on if it holds. Falls back to
+# raw usage when the reset is missing. Capped at 999 so a burst seconds into a
+# fresh window can't print a six-digit number and shove the layout around.
+pace_projected() {
     local used="$1" reset="$2" dur="$3" now start elapsed projected
     if [ -z "$reset" ]; then
         projected="$used"
@@ -76,8 +77,15 @@ pace_color() {
         [ "$elapsed" -gt "$dur" ] && elapsed=$dur
         projected=$(( used * dur / elapsed ))
     fi
-    if [ "$projected" -ge 100 ]; then printf '%s' "$RED"
-    elif [ "$projected" -ge 90 ]; then printf '%s' "$YELLOW"
+    [ "$projected" -gt 999 ] && projected=999
+    printf '%d' "$projected"
+}
+
+# pace_color PROJECTED — red if the pace is on track to blow the window, yellow
+# if it lands near the edge, else green.
+pace_color() {
+    if [ "$1" -ge 100 ]; then printf '%s' "$RED"
+    elif [ "$1" -ge 90 ]; then printf '%s' "$YELLOW"
     else printf '%s' "$GREEN"; fi
 }
 
@@ -175,17 +183,23 @@ if [ -n "$five_used" ] || [ -n "$week_used" ]; then
     right_plain="${right_plain}  ·"
     right_colored="${right_colored}  ·"
     if [ -n "$five_used" ]; then
-        u=$(printf "%.0f" "$five_used"); c=$(pace_color "$u" "$five_reset" 18000)
+        u=$(printf "%.0f" "$five_used")
+        p=$(pace_projected "$u" "$five_reset" 18000); c=$(pace_color "$p")
         t=$(time_left "$five_reset")
         seg="5h ${u}%"; [ -n "$t" ] && seg="${seg} (${t})"
         right_plain="${right_plain} ${seg}"
         right_colored="${right_colored} ${c}${seg}${RESET}"
     fi
     if [ -n "$week_used" ]; then
-        u=$(printf "%.0f" "$week_used"); c=$(pace_color "$u" "$week_reset" 604800)
+        u=$(printf "%.0f" "$week_used")
+        p=$(pace_projected "$u" "$week_reset" 604800); c=$(pace_color "$p")
         [ -n "$five_used" ] && { right_plain="${right_plain} ·"; right_colored="${right_colored} ·"; }
-        right_plain="${right_plain} 7d ${u}%"
-        right_colored="${right_colored} ${c}7d ${u}%${RESET}"
+        # The parenthesised figure is where the week lands if this pace holds —
+        # the same number the color is keyed off. Suppressed without a reset
+        # time, where it would just restate the usage beside it.
+        seg="7d ${u}%"; [ -n "$week_reset" ] && seg="${seg} (${p}%)"
+        right_plain="${right_plain} ${seg}"
+        right_colored="${right_colored} ${c}${seg}${RESET}"
     fi
 fi
 
