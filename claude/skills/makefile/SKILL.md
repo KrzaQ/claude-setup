@@ -51,14 +51,28 @@ every repo regardless of language.
 
 For anything beyond a couple of targets, add a `help` target and
 `.DEFAULT_GOAL := help` so bare `make` lists what's available. Document each
-target inline with a `## description` after the colon, and use this one-liner
+target inline with a `## description` after the colon, and use this recipe
 verbatim (it's the standard across my repos):
 
 ```make
 help: ## Show this help
-	@grep -hE '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | \
-		awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
+	@grep -hE '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | \
+		awk 'BEGIN {FS = ":.*?## "; w = 12} { k[NR] = $$1; v[NR] = $$2; if (length($$1) > w) w = length($$1) } \
+		     END { for (i = 1; i <= NR; i++) printf "  \033[36m%-*s\033[0m %s\n", w, k[i], v[i] }'
 ```
+
+Two things it gets right that are easy to get wrong:
+
+- **The character class covers every character a target name can contain.**
+  Digits are easy to leave out, and the failure is silent: `e2e` or `s3-sync`
+  simply never appears in the listing, while `help` still looks like it works.
+- **The description column measures itself.** awk buffers the matches, takes the
+  widest target name, and feeds it to `printf` as a `*` field width, with 12 as a
+  floor. A hardcoded width silently collides with the description the first time
+  someone adds a `docker-build-base`, and nobody goes back to widen it.
+
+Don't unroll this back into a single `printf` per line — the buffering is the
+whole point.
 
 Tiny single-purpose Makefiles (2–3 targets) can skip `help` and the inline
 `##` docs — don't over-engineer.
@@ -84,8 +98,9 @@ Tiny single-purpose Makefiles (2–3 targets) can skip `help` and the inline
 .DEFAULT_GOAL := help
 
 help: ## Show this help
-	@grep -hE '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | \
-		awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
+	@grep -hE '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | \
+		awk 'BEGIN {FS = ":.*?## "; w = 12} { k[NR] = $$1; v[NR] = $$2; if (length($$1) > w) w = length($$1) } \
+		     END { for (i = 1; i <= NR; i++) printf "  \033[36m%-*s\033[0m %s\n", w, k[i], v[i] }'
 
 install: ## Install dependencies
 	npm install
