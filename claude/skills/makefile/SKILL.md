@@ -1,7 +1,8 @@
 ---
-description: create or update a project Makefile in my house style
+name: makefile
+description: Create or update a project's root Makefile in the user's house style — a uniform task-runner front door (`make build`, `make test`, `make run`) whose recipes are thin wrappers around the project's native tool (cargo, npm, uv, dub, cmake, docker, ...), so the same targets mean the same thing in every repo regardless of language.
+when_to_use: When the user asks to add, create, fix, or extend a Makefile ("write a makefile for this", "add a make target", "/makefile"), or when a task calls for a project Makefile — including adding a target to an existing one. Not for editing build systems that merely happen to be make-based (autotools output, kernel builds).
 argument-hint: what the makefile should build/run (optional — infer if blank)
-disable-model-invocation: true
 allowed-tools: Read, Grep, Glob, Write, Edit, Bash(ls *), Bash(cat *), Bash(test *), Bash(find *), Bash(git ls-files *), Bash(git status), Bash(git check-ignore *)
 ---
 
