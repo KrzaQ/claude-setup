@@ -61,7 +61,24 @@
       "mcp__vikunja__update_task"
     ],
     "defaultMode": "default",
-    "deny": []
+    "deny": [
+      "Bash(git add --all*)",
+      "Bash(git add --update*)",
+      "Bash(git add -A*)",
+      "Bash(git add -u*)",
+      "Bash(git add . *)",
+      "Bash(git add .)",
+      "Bash(git add :/*)",
+      "Bash(git commit --all*)",
+      "Bash(git commit -a*)",
+      "Bash(git stage --all*)",
+      "Bash(git stage --update*)",
+      "Bash(git stage -A*)",
+      "Bash(git stage -u*)",
+      "Bash(git stage . *)",
+      "Bash(git stage .)",
+      "Bash(git stage :/*)"
+    ]
   },
   "showThinkingSummaries": true,
   "statusLine": {
