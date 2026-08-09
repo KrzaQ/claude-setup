@@ -1,0 +1,16 @@
+# Machine-specific make targets. Copy to Makefile.local (gitignored) and edit.
+#
+# The main Makefile ends with `-include Makefile.local`, so anything defined
+# here is merged in, and any target documented with a trailing `## ...` comment
+# shows up in `make help` alongside the committed targets.
+#
+# Keep clone-reproducible targets in the main Makefile — this file is for
+# things tied to one machine's setup: extra git remotes, deploy hosts, paths.
+
+.PHONY: push
+
+push: ## Push all branches to every configured git remote
+	@for remote in $$(git remote); do \
+		echo "pushing to $$remote..."; \
+		git push $$remote --all; \
+	done

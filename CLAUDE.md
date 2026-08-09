@@ -18,6 +18,7 @@ This repo syncs Claude Code and OpenCode assets between machines.
 - `opencode/manifest.json` — OpenCode commands, skills, and managed config keys
 - `opencode/scripts/sync.py` — OpenCode save/install/diff logic (Python, run via `uv`)
 - `opencode/Makefile` — OpenCode `save` / `install` / `diff` targets
+- `Makefile.local.example` — template for the gitignored `Makefile.local`, which holds machine-specific targets (extra push remotes, deploy hosts)
 
 ## Rules
 
