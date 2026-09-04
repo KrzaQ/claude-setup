@@ -208,10 +208,10 @@ fi
 # but sets $COLUMNS to the terminal width before running us (>= 2.1.153);
 # default to 80 only if it's somehow unset.
 term_width="${COLUMNS:-80}"
-# The statusline render region is narrower than $COLUMNS (tmux/host offsets it
-# from the left edge), so filling all of $COLUMNS pushes the right end
-# off-screen. Reserve a few columns so the right segment stays visible.
-avail=$(( term_width - 3 ))
+# The statusline render region is narrower than $COLUMNS: Claude Code indents it
+# two columns from the left edge and keeps two more free on the right, and
+# anything past that gets truncated to an ellipsis. Reserve those four columns.
+avail=$(( term_width - 4 ))
 pad=$(( avail - ${#left_plain} - ${#right_plain} ))
 [ "$pad" -lt 1 ] && pad=1
 
