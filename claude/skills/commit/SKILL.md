@@ -34,5 +34,7 @@ temporarily reverting a hunk, etc.). Avoid grab-bag rollups.
   Sonnet, Haiku, Anthropic or any other tool/model in the commit.
 - Do not use `git -C`. If you need to operate in a different directory,
   `cd` there first.
+- Do not use `git commit -a` (or `-am`). Always stage the intended files
+  by name with `git add <path>` first, then commit.
 
 $ARGUMENTS
