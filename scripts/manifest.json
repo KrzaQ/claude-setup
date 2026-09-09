@@ -5,6 +5,7 @@
     "strict-code-reviewer.md"
   ],
   "files": [
+    "CLAUDE.md",
     "statusline-command.sh"
   ],
   "managed_settings_keys": [
