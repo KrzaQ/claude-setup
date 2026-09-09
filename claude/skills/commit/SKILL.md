@@ -40,6 +40,11 @@ Take from each tier only what the tier above it doesn't cover.
 - **Body** (when needed): explain *why* — the motivation, constraint, or
   incident that prompted the change — not a recap of the diff. Skip the
   body entirely for self-evident changes.
+- **Language**: plain and unambiguous. One idea per sentence, active
+  voice, the same word for the same thing throughout, and a plain verb
+  rather than a noun cluster ("cache the result", not "result caching
+  implementation"). This is a preference, not a hard rule — a clear
+  message beats an obedient one.
 
 ## Splitting
 
