@@ -9,6 +9,7 @@
     "statusline-command.sh"
   ],
   "managed_settings_keys": [
+    "disableAgentView",
     "permissions",
     "showThinkingSummaries",
     "statusLine"

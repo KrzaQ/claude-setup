@@ -1,4 +1,5 @@
 {
+  "disableAgentView": true,
   "permissions": {
     "allow": [
       "Bash(date *)",
