@@ -121,8 +121,10 @@ left_plain=""
 left_colored=""
 base="${project:-$cwd}"
 if [ -n "$base" ]; then
-    # The ~ is escaped: bare, it would tilde-expand back to $HOME and no-op.
-    dbase="$base"; [ -n "$HOME" ] && dbase="${base/#$HOME/\~}"
+    # The ~ goes in through a variable: bare, it would tilde-expand back to $HOME
+    # and no-op, and escaped, bash 3.2 (macOS) keeps the backslash in the output.
+    tilde='~'
+    dbase="$base"; [ -n "$HOME" ] && dbase="${base/#$HOME/$tilde}"
     left_plain="$dbase"
     left_colored="${GREY}${dbase}${RESET}"
 
@@ -134,7 +136,7 @@ if [ -n "$base" ]; then
                 left_plain="${left_plain}/${rel}"
                 left_colored="${left_colored}${LBLUE}/${rel}${RESET}" ;;
             *)  # cwd is outside the project root — show it in full instead
-                dcwd="$cwd"; [ -n "$HOME" ] && dcwd="${cwd/#$HOME/\~}"
+                dcwd="$cwd"; [ -n "$HOME" ] && dcwd="${cwd/#$HOME/$tilde}"
                 left_plain="$dcwd"
                 left_colored="${LBLUE}${dcwd}${RESET}" ;;
         esac
